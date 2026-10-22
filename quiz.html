@@ -65,6 +65,8 @@
     .nav-links a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
     .nav-links a.active { color: var(--accent); background: var(--accent-glow); font-weight: 600; }
     .nav-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text); font-size: 1.4rem; cursor: pointer; border-radius: 12px; width: 2.8rem; height: 2.8rem; }
+    /* The dedicated dock is mobile-only; keep it out of the desktop document flow. */
+    .mobile-dock { display: none; }
 
     @media (max-width: 768px) {
       body { padding-bottom: calc(5.6rem + env(safe-area-inset-bottom)); }
