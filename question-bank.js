@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 196558)
-Total output lines: 14447
+Warning: truncated output (original token count: 196604)
+Total output lines: 14451
 
 // Auto-generated question bank — do not edit manually
 const QUESTION_BANK = {
@@ -5017,7 +5017,7 @@ const QUESTION_BANK = {
               "options": [
                 "West",
                 "South",
-              …96558 tokens truncated…y used toxic defoliants in Operation Trail Dust, as the program was called. 2. The goal of the operation was to defoliate the countryside and as a result, flush out members of the National Liberation Front of North Vietnam and deprive them of access to food supplies. 3. Just as American veterans and people of Southeast Asia still struggle today with the long-term effects of exposure to Agent Orange, so too do the many species of the Southeast Asian forests stripped of their vegetation. 4. Agent Orange was developed by the US Department of the Army Advanced Research Project Agency (ARPA) and used as a defoliant in Vietnam and parts of Laos and Cambodia from 1962 to 1971. 5. The creation and use of Agent Orange are part of the explosion of chemical fertilizers, insecticides, and herbicides after World War II— one of the main contributors to the Alarming loss of biodiversity in the past half-century.",
+              …96604 tokens truncated…ional Liberation Front of North Vietnam and deprive them of access to food supplies. 3. Just as American veterans and people of Southeast Asia still struggle today with the long-term effects of exposure to Agent Orange, so too do the many species of the Southeast Asian forests stripped of their vegetation. 4. Agent Orange was developed by the US Department of the Army Advanced Research Project Agency (ARPA) and used as a defoliant in Vietnam and parts of Laos and Cambodia from 1962 to 1971. 5. The creation and use of Agent Orange are part of the explosion of chemical fertilizers, insecticides, and herbicides after World War II— one of the main contributors to the Alarming loss of biodiversity in the past half-century.",
               "options": [
                 "DABCE",
                 "ECDAB",
@@ -8327,3 +8327,7 @@ const QUESTION_BANK = {
     ]
   }
 };
+
+// Expose one validated bank to every classic script and notify deferred pages.
+window.QUESTION_BANK = QUESTION_BANK;
+document.dispatchEvent(new CustomEvent('question-bank-ready'));

@@ -410,6 +410,30 @@
         .mobile-dock .dock-icon { font-size: 1.08rem; line-height: 1; }
       }
     }
+
+    /* Final mobile rule: the desktop nav is hidden and only the dedicated
+       bottom dock may be visible below the mobile breakpoint. */
+    @media screen and (max-width: 768px) {
+      .navbar > .nav-links,
+      .navbar > .nav-toggle {
+        display: none !important;
+        position: static !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        transform: none !important;
+      }
+      body { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px)) !important; }
+      .mobile-dock {
+        position: fixed !important;
+        inset: auto 0.5rem 0.75rem !important;
+        width: auto !important;
+        max-width: none !important;
+        height: 4rem !important;
+        display: flex !important;
+        z-index: 2147483000 !important;
+        transform: none !important;
+      }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -497,22 +521,6 @@
     </div>
   </div>
 
-  <script src="js/qb01.js?v=20261022"></script>
-  <script src="js/qb02.js?v=20261022"></script>
-  <script src="js/qb03.js?v=20261022"></script>
-  <script src="js/qb04.js?v=20261022"></script>
-  <script src="js/qb05.js?v=20261022"></script>
-  <script src="js/qb06.js?v=20261022"></script>
-  <script src="js/qb07.js?v=20261022"></script>
-  <script src="js/qb08.js?v=20261022"></script>
-  <script src="js/qb09.js?v=20261022"></script>
-  <script src="js/qb10.js?v=20261022"></script>
-  <script src="js/qb11.js?v=20261022"></script>
-  <script src="js/qb12.js?v=20261022"></script>
-  <script src="js/qb13.js?v=20261022"></script>
-  <script src="js/qb14.js?v=20261022"></script>
-  <script src="js/qb15.js?v=20261022"></script>
-  <script src="js/qb16.js?v=20261022"></script>
   <script src="question-bank.js?v=20261023-bank"></script>
   <script src="js/storage.js"></script>
   <script src="js/quiz.js"></script>
