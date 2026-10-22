@@ -446,6 +446,17 @@ main.container {
     background: var(--accent-dim) !important;
   }
   .mobile-dock .dock-icon { font-size: 1.08rem; line-height: 1; }
+
+  /* Never allow the legacy desktop/mobile nav to become a second dock. */
+  .navbar > .nav-links,
+  .navbar > .nav-toggle,
+  .nav-links#main-nav {
+    position: static !important;
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: none !important;
+  }
 }
 
 /* --- Page Header --- */
