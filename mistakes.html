@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mistakes Notebook — TCS NQT Prep</title>
+  <link rel="stylesheet" href="css/style.css?v=20261022">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --surface-hover: #f4f0ec;
+      --border: #dfe4df;
+      --text: #171b20;
+      --text-secondary: #5f6c76;
+      --accent: #166c5e;
+      --accent-dim: #eaf4f2;
+      --error: #b64747;
+      --error-dim: #fdeceb;
+      --warning: #b86a1e;
+      --warning-dim: #fff2e7;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shadow: 0 8px 18px rgba(17,24,39,.05);
+      --transition: .22s ease;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(180deg, #f7f5f2 0%, #f3f1ee 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .hidden { display: none !important; }
+    .mistake-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      transition: border-color var(--transition);
+    }
+    .mistake-item:hover {
+      border-color: var(--error);
+    }
+    .filter-btn {
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-shell">
+      <div class="nav-brand">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span>TCS NQT Prep</span>
+      </div>
+      <div class="nav-links" id="main-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="quiz.html">Practice Quiz</a>
+        <a href="test.html">Full Papers</a>
+        <a href="flashcards.html">Flashcards</a>
+        <a href="mistakes.html" class="active">Mistakes</a>
+        <a href="stats.html">Stats</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links'); nav.classList.toggle('open'); this.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('open'))">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  <nav class="mobile-dock" aria-label="Mobile navigation">
+    <a href="index.html"><span class="dock-icon">⌂</span>Home</a>
+    <a href="quiz.html"><span class="dock-icon">✓</span>Quiz</a>
+    <a href="test.html"><span class="dock-icon">▣</span>Mocks</a>
+    <a href="flashcards.html"><span class="dock-icon">◇</span>Cards</a>
+    <a href="mistakes.html" class="active"><span class="dock-icon">!</span>Mistakes</a>
+    <a href="stats.html"><span class="dock-icon">↗</span>Stats</a>
+  </nav>
+
+  <main class="container" style="margin-top:2rem; margin-bottom:3rem;">
+    
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+      <div>
+        <h1 style="font-size:1.8rem; margin-bottom:0.35rem;">Mistakes Notebook</h1>
+        <p style="color:var(--text-secondary);">All incorrect responses from mock tests and quizzes are auto-saved here. Review and turn weaknesses into strengths.</p>
+      </div>
+
+      <div style="display:flex; gap:0.75rem; align-items:center;">
+        <button class="btn btn-primary" id="btn-requiz" onclick="MistakesApp.startRequiz()"><i class="fa-solid fa-repeat"></i> Re-Quiz Mistakes</button>
+        <button class="btn btn-danger btn-sm" onclick="MistakesApp.clearAll()">Clear All</button>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-grid" style="margin-bottom:1.5rem;">
+      <div class="card stat-card">
+        <div class="stat-value" id="count-total-mistakes" style="color:var(--error);">0</div>
+        <div class="stat-label">Active Mistakes</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="count-learned" style="color:var(--accent);">0</div>
+        <div class="stat-label">Learned & Cleared</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="count-categories">0</div>
+        <div class="stat-label">Affected Categories</div>
+      </div>
+    </div>
+
+    <!-- Category filter pills -->
+    <div style="margin-bottom:1.5rem; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;" id="category-filters">
+      <span style="font-size:0.85rem; color:var(--text-secondary); margin-right:0.25rem;">Filter by Category:</span>
+      <button class="filter-btn active" onclick="MistakesApp.filterByCategory(null)">All</button>
+      <!-- Filled dynamically -->
+    </div>
+
+    <!-- Re-Quiz Mode Container (Hidden initially) -->
+    <div id="requiz-container" class="card hidden" style="margin-bottom:2rem; border-color:var(--accent);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border); padding-bottom:0.75rem;">
+        <span class="badge badge-primary">RE-QUIZ MODE</span>
+        <span id="requiz-counter" style="color:var(--text-secondary); font-size:0.9rem;">1 / 5</span>
+        <button class="btn btn-secondary btn-sm" onclick="MistakesApp.exitRequiz()">Exit Re-Quiz</button>
+      </div>
+
+      <div id="requiz-question-text" style="font-size:1.15rem; line-height:1.6; margin-bottom:1.5rem;"></div>
+      <div id="requiz-options" style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;"></div>
+      <div id="requiz-feedback" class="hidden" style="margin-bottom:1.5rem;"></div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button class="btn btn-primary hidden" id="requiz-next-btn" onclick="MistakesApp.nextRequizQuestion()">Next Question →</button>
+      </div>
+    </div>
+
+    <!-- Mistakes List Container -->
+    <div id="mistakes-list">
+      <!-- Cards rendered dynamically -->
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>TCS NQT Preparation Web App • Questions sourced from <a href="https://github.com/Arjunpolen/TCS-NQT-PYQ-QUESTIONS" target="_blank" style="color:var(--accent);">TCS-NQT-PYQ-QUESTIONS</a></p>
+  </footer>
+
+  <script src="data/questions.js"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    const MistakesApp = {
+      activeCategory: null,
+      mistakes: [],
+      requizIndex: 0,
+      requizPool: [],
+
+      init() {
+        Storage.updateStreak();
+        this.loadData();
+      },
+
+      loadData() {
+        this.mistakes = Storage.getMistakes();
+        const learned = Storage.getLearned();
+
+        document.getElementById('count-total-mistakes').textContent = this.mistakes.length;
+        document.getElementById('count-learned').textContent = learned.length;
+
+        // Categories count
+        const cats = new Set(this.mistakes.map(m => m.category || 'General'));
+        document.getElementById('count-categories').textContent = cats.size;
+
+        this.renderCategoryFilters(Array.from(cats));
+        this.renderMistakesList();
+      },
+
+      renderCategoryFilters(categories) {
+        const container = document.getElementById('category-filters');
+        const allBtn = container.querySelector('button');
+        container.innerHTML = '';
+        container.appendChild(allBtn);
+
+        categories.forEach(cat => {
+          const btn = document.createElement('button');
+          btn.className = `filter-btn ${this.activeCategory === cat ? 'active' : ''}`;
+          btn.textContent = cat;
+          btn.onclick = () => this.filterByCategory(cat);
+          container.appendChild(btn);
+        });
+      },
+
+      filterByCategory(cat) {
+        this.activeCategory = cat;
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(b => {
+          if ((cat === null && b.textContent === 'All') || b.textContent === cat) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+        this.renderMistakesList();
+      },
+
+      renderMistakesList() {
+        const container = document.getElementById('mistakes-list');
+        let filtered = this.mistakes;
+
+        if (this.activeCategory) {
+          filtered = filtered.filter(m => (m.category || 'General') === this.activeCategory);
+        }
+
+        if (filtered.length === 0) {
+          container.innerHTML = `
+            <div class="card" style="text-align:center; padding:3rem 1rem;">
+              <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+              <h3 style="font-size:1.3rem; margin-bottom:0.5rem;">No Mistakes Found!</h3>
+              <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Great job! Any questions you answer incorrectly in full mock tests or quizzes will appear here automatically.</p>
+              <a href="test.html" class="btn btn-primary">Take a Mock Test</a>
+            </div>
+          `;
+          document.getElementById('btn-requiz').disabled = true;
+          return;
+        }
+
+        document.getElementById('btn-requiz').disabled = false;
+
+        container.innerHTML = filtered.map(m => `
+          <div class="mistake-item">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+              <div>
+                <span class="badge badge-outline">${escapeHtml(m.category || 'General')}</span>
+                ${m.section ? `<span class="badge badge-secondary" style="margin-left:0.35rem;">${escapeHtml(m.section)}</span>` : ''}
+              </div>
+              <div style="display:flex; gap:0.5rem; align-items:center;">
+                <button class="btn btn-secondary btn-sm" onclick="MistakesApp.markLearned('${m.questionId}')">✓ Mark Learned</button>
+                <button class="btn btn-secondary btn-sm" style="color:var(--error);" onclick="MistakesApp.removeSingle('${m.questionId}')">✕</button>
+              </div>
+            </div>
+
+            <div style="font-size:1.05rem; line-height:1.5; color:var(--text); margin-bottom:1rem; font-weight:500;">
+              ${escapeHtml(m.questionText)}
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; background:var(--surface-hover); padding:0.75rem 1rem; border-radius:var(--radius-sm); border:1px solid var(--border); font-size:0.9rem;">
+              <div>
+                <span style="color:var(--error); font-weight:600;">✗ Your Answer:</span><br>
+                <span style="color:var(--text-secondary);">${escapeHtml(m.yourAnswer || 'None')}</span>
+              </div>
+              <div>
+                <span style="color:var(--accent); font-weight:600;">✓ Correct Answer:</span><br>
+                <span style="color:var(--text);">${escapeHtml(m.correctAnswer || 'See solution')}</span>
+              </div>
+            </div>
+
+            <div style="margin-top:0.6rem; font-size:0.75rem; color:var(--text-secondary); text-align:right;">
+              Recorded: ${new Date(m.date).toLocaleString()}
+            </div>
+          </div>
+        `).join('');
+      },
+
+      markLearned(qId) {
+        Storage.markAsLearned(qId);
+        this.loadData();
+      },
+
+      removeSingle(qId) {
+        Storage.removeMistake(qId);
+        this.loadData();
+      },
+
+      clearAll() {
+        if (confirm('Are you sure you want to clear your mistakes notebook?')) {
+          Storage.clearMistakes();
+          this.loadData();
+        }
+      },
+
+      // --- Re-Quiz Mode ---
+      startRequiz() {
+        const list = this.activeCategory 
+          ? this.mistakes.filter(m => (m.category || 'General') === this.activeCategory)
+          : this.mistakes;
+
+        if (list.length === 0) return;
+
+        this.requizPool = [...list];
+        this.requizIndex = 0;
+
+        document.getElementById('requiz-container').classList.remove('hidden');
+        document.getElementById('requiz-container').scrollIntoView({ behavior: 'smooth' });
+        this.renderRequizQuestion();
+      },
+
+      renderRequizQuestion() {
+        const item = this.requizPool[this.requizIndex];
+        const total = this.requizPool.length;
+
+        document.getElementById('requiz-counter').textContent = `${this.requizIndex + 1} of ${total}`;
+        document.getElementById('requiz-question-text').textContent = item.questionText;
+
+        const fb = document.getElementById('requiz-feedback');
+        fb.classList.add('hidden');
+        document.getElementById('requiz-next-btn').classList.add('hidden');
+
+        // Check if we can find full question options from bank
+        let foundQ = null;
+        if (typeof QUESTION_BANK !== 'undefined') {
+          for (const cat of QUESTION_BANK.categories || []) {
+            foundQ = (cat.questions || []).find(q => q.id === item.questionId);
+            if (foundQ) break;
+          }
+          if (!foundQ) {
+            for (const p of QUESTION_BANK.papers || []) {
+              for (const s of p.sections || []) {
+                foundQ = (s.questions || []).find(q => q.id === item.questionId);
+                if (foundQ) break;
+              }
+              if (foundQ) break;
+            }
+          }
+        }
+
+        const optionsContainer = document.getElementById('requiz-options');
+        if (foundQ && foundQ.options && foundQ.options.length > 0) {
+          optionsContainer.innerHTML = foundQ.options.map((opt, i) => `
+            <button class="quiz-option" onclick="MistakesApp.answerRequiz(${i}, ${foundQ.correct})">
+              <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
+              <span class="opt-text">${escapeHtml(opt)}</span>
+            </button>
+          `).join('');
+        } else {
+          // Fallback if full options not available: Show Prompt & Reveal Answer
+          optionsContainer.innerHTML = `
+            <div style="background:var(--surface-hover); padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+              <div style="color:var(--text-secondary); margin-bottom:0.5rem;">Can you recall the correct answer?</div>
+              <button class="btn btn-secondary" onclick="MistakesApp.revealAnswerFallback('${escapeHtml(item.correctAnswer)}')">Reveal Correct Answer</button>
+            </div>
+          `;
+        }
+      },
+
+      answerRequiz(selectedIdx, correctIdx) {
+        const btns = document.querySelectorAll('#requiz-options .quiz-option');
+        btns.forEach((btn, i) => {
+          btn.disabled = true;
+          if (i === correctIdx) {
+            btn.classList.add('correct');
+          } else if (i === selectedIdx) {
+            btn.classList.add('wrong');
+          } else {
+            btn.classList.add('dimmed');
+          }
+        });
+
+        const isCorrect = (selectedIdx === correctIdx);
+        const item = this.requizPool[this.requizIndex];
+
+        const fb = document.getElementById('requiz-feedback');
+        fb.classList.remove('hidden');
+        if (isCorrect) {
+          fb.innerHTML = `
+            <div style="background:var(--accent-dim); border:1px solid var(--accent); color:var(--accent); padding:0.75rem; border-radius:var(--radius-sm);">
+              Excellent! You got it right this time.
+              <button class="btn btn-sm btn-primary" style="margin-left:1rem;" onclick="MistakesApp.markLearned('${item.questionId}')">Remove from Mistakes</button>
+            </div>
+          `;
+        } else {
+          fb.innerHTML = `
+            <div style="background:var(--error-dim); border:1px solid var(--error); color:var(--error); padding:0.75rem; border-radius:var(--radius-sm);">
+              Still not quite right. Keep practicing this concept!
+            </div>
+          `;
+        }
+
+        document.getElementById('requiz-next-btn').classList.remove('hidden');
+      },
+
+      revealAnswerFallback(correctAnswer) {
+        const fb = document.getElementById('requiz-feedback');
+        fb.classList.remove('hidden');
+        fb.innerHTML = `
+          <div style="background:var(--accent-dim); border:1px solid var(--accent); color:var(--accent); padding:0.75rem; border-radius:var(--radius-sm);">
+            <strong>Correct Answer:</strong> ${correctAnswer}
+          </div>
+        `;
+        document.getElementById('requiz-next-btn').classList.remove('hidden');
+      },
+
+      nextRequizQuestion() {
+        if (this.requizIndex < this.requizPool.length - 1) {
+          this.requizIndex++;
+          this.renderRequizQuestion();
+        } else {
+          alert('You have completed re-quizzing these mistakes!');
+          this.exitRequiz();
+          this.loadData();
+        }
+      },
+
+      exitRequiz() {
+        document.getElementById('requiz-container').classList.add('hidden');
+      }
+    };
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      MistakesApp.init();
+    });
+  </script>
+</body>
+</html>

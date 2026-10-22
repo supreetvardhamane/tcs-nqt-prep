@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Performance & Analytics — TCS NQT Prep</title>
+  <link rel="stylesheet" href="css/style.css?v=20261022">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --surface-hover: #f4f0ec;
+      --border: #dfe4df;
+      --text: #171b20;
+      --text-secondary: #5f6c76;
+      --accent: #166c5e;
+      --accent-dim: #eaf4f2;
+      --error: #b64747;
+      --error-dim: #fdeceb;
+      --warning: #b86a1e;
+      --warning-dim: #fff2e7;
+      --info: #3058a6;
+      --info-dim: #edf3ff;
+      --purple: #5c4ba8;
+      --purple-dim: #f2efff;
+      --radius: 18px;
+      --radius-sm: 12px;
+      --shadow: 0 8px 18px rgba(17,24,39,.05);
+      --transition: .22s ease;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(180deg, #f7f5f2 0%, #f3f1ee 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .bar-chart-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .bar-label {
+      width: 220px;
+      font-size: 0.85rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      height: 12px;
+      background: var(--surface-hover);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 6px;
+      transition: width 0.6s ease;
+    }
+    .bar-value {
+      width: 55px;
+      text-align: right;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-shell">
+      <div class="nav-brand">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span>TCS NQT Prep</span>
+      </div>
+      <div class="nav-links" id="main-nav">
+        <a href="index.html">Dashboard</a>
+        <a href="quiz.html">Practice Quiz</a>
+        <a href="test.html">Full Papers</a>
+        <a href="flashcards.html">Flashcards</a>
+        <a href="mistakes.html">Mistakes</a>
+        <a href="stats.html" class="active">Stats</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="const nav=document.querySelector('.nav-links'); nav.classList.toggle('open'); this.classList.toggle('active'); this.setAttribute('aria-expanded', nav.classList.contains('open'))">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  <nav class="mobile-dock" aria-label="Mobile navigation">
+    <a href="index.html"><span class="dock-icon">⌂</span>Home</a>
+    <a href="quiz.html"><span class="dock-icon">✓</span>Quiz</a>
+    <a href="test.html"><span class="dock-icon">▣</span>Mocks</a>
+    <a href="flashcards.html"><span class="dock-icon">◇</span>Cards</a>
+    <a href="mistakes.html"><span class="dock-icon">!</span>Mistakes</a>
+    <a href="stats.html" class="active"><span class="dock-icon">↗</span>Stats</a>
+  </nav>
+
+  <main class="container" style="margin-top:2rem; margin-bottom:3rem;">
+    
+    <div style="margin-bottom:2rem;">
+      <h1 style="font-size:1.8rem; margin-bottom:0.35rem;">Analytics & Readiness Dashboard</h1>
+      <p style="color:var(--text-secondary);">Comprehensive breakdown of your preparation trajectory, category mastery, and historical mock scores.</p>
+    </div>
+
+    <!-- Top KPI Cards -->
+    <div class="stats-grid" style="margin-bottom:2rem;">
+      <div class="card stat-card">
+        <div class="stat-value" id="kpi-attempted">0</div>
+        <div class="stat-label">Total Questions Practiced</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="kpi-accuracy">0%</div>
+        <div class="stat-label">Cumulative Accuracy</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="kpi-tests-count">0</div>
+        <div class="stat-label">Mock Tests Completed</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="kpi-streak">0</div>
+        <div class="stat-label">Current Day Streak</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="gap:1.5rem; margin-bottom:2.5rem; align-items:start;">
+      
+      <!-- Category Performance Chart -->
+      <div class="card">
+        <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Topic Accuracy Breakdown</h3>
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:1.25rem;">Real-time performance across practice categories.</p>
+        
+        <div id="category-bars-container">
+          <!-- Filled dynamically -->
+        </div>
+      </div>
+
+      <!-- Preparation Summary & Recommendation -->
+      <div class="card">
+        <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">Preparation Insights</h3>
+        <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:1.25rem;">Actionable focus areas based on your test results.</p>
+        
+        <div id="readiness-box" style="background:var(--surface-hover); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.25rem;">
+          <!-- Dynamically populated insight -->
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <a href="test.html" class="btn btn-warning" style="text-align:center;">Take a 3-Hour Full Mock Test</a>
+          <a href="mistakes.html" class="btn btn-danger" style="text-align:center;">Review Saved Mistakes Notebook</a>
+          <a href="flashcards.html?type=programming_verified" class="btn btn-secondary" style="text-align:center;">Practice Verified Coding PYQs</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Complete Test History Table -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+        <h3 style="font-size:1.15rem;">Complete Test & Exam History</h3>
+        <button class="btn btn-secondary btn-sm" onclick="StatsApp.clearHistory()">Clear History</button>
+      </div>
+
+      <div id="full-history-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>TCS NQT Preparation Web App • Questions sourced from <a href="https://github.com/Arjunpolen/TCS-NQT-PYQ-QUESTIONS" target="_blank" style="color:var(--accent);">TCS-NQT-PYQ-QUESTIONS</a></p>
+  </footer>
+
+  <script src="data/questions.js"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    const StatsApp = {
+      init() {
+        Storage.updateStreak();
+        this.renderStats();
+      },
+
+      renderStats() {
+        const stats = Storage.getStats();
+        const history = Storage.getTestHistory();
+        const mistakes = Storage.getMistakes();
+
+        document.getElementById('kpi-attempted').textContent = stats.totalAttempted;
+        document.getElementById('kpi-accuracy').textContent = stats.accuracy + '%';
+        document.getElementById('kpi-tests-count').textContent = history.length;
+        document.getElementById('kpi-streak').textContent = stats.streakDays;
+
+        // Render Topic Accuracy Bars
+        const barsContainer = document.getElementById('category-bars-container');
+        const breakdown = stats.categoryBreakdown;
+        const catEntries = Object.entries(breakdown);
+
+        if (catEntries.length === 0) {
+          barsContainer.innerHTML = `
+            <div style="color:var(--text-secondary); font-size:0.9rem; padding:1.5rem 0; text-align:center;">
+              No practice data yet. Practice MCQs in any category to see your mastery chart!
+            </div>
+          `;
+        } else {
+          barsContainer.innerHTML = catEntries.map(([catId, data]) => {
+            const foundCat = (QUESTION_BANK.categories || []).find(c => c.id === catId);
+            const catName = foundCat ? foundCat.name : catId;
+            let barColor = 'var(--accent)';
+            if (data.accuracy < 50) barColor = 'var(--error)';
+            else if (data.accuracy < 75) barColor = 'var(--warning)';
+
+            return `
+              <div class="bar-chart-row">
+                <div class="bar-label" title="${catName}">${catName}</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${data.accuracy}%; background:${barColor};"></div>
+                </div>
+                <div class="bar-value">${data.accuracy}%</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Render Insight
+        const insightBox = document.getElementById('readiness-box');
+        if (history.length === 0 && stats.totalAttempted === 0) {
+          insightBox.innerHTML = `
+            <h4 style="color:var(--accent); margin-bottom:0.4rem;">🏁 Getting Started</h4>
+            <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5;">
+              Start by taking a 3-hour timed Mock Paper or practice Numerical Ability and CS Fundamentals questions. Your weakness patterns will appear here.
+            </p>
+          `;
+        } else {
+          const avgScore = history.length > 0 
+            ? Math.round(history.reduce((acc, h) => acc + h.percentage, 0) / history.length)
+            : stats.accuracy;
+
+          let advice = '';
+          if (avgScore >= 80) {
+            advice = 'Exceptional preparation! Maintain consistency and keep reviewing your mistakes notebook daily.';
+          } else if (avgScore >= 60) {
+            advice = 'Good foundational grasp. Focus on speed in Quantitative Aptitude and review difficult coding patterns in Flashcards.';
+          } else {
+            advice = 'Target core aptitude concepts first. Re-attempt questions saved in the Mistakes Notebook to bridge knowledge gaps.';
+          }
+
+          insightBox.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+              <span style="font-weight:600; color:var(--text);">Readiness Score:</span>
+              <span class="badge ${avgScore >= 70 ? 'badge-success' : 'badge-warning'}">${avgScore}% Average</span>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5;">
+              ${advice}
+            </p>
+            <div style="margin-top:0.75rem; font-size:0.85rem; color:var(--text-secondary);">
+              • Active Mistakes Pending Review: <strong>${mistakes.length}</strong>
+            </div>
+          `;
+        }
+
+        // Render History Table
+        const historyContainer = document.getElementById('full-history-container');
+        if (history.length === 0) {
+          historyContainer.innerHTML = `
+            <div style="text-align:center; padding:2rem 0; color:var(--text-secondary); font-size:0.9rem;">
+              No completed tests yet. Your detailed mock exam reports will be logged here.
+            </div>
+          `;
+        } else {
+          historyContainer.innerHTML = `
+            <table class="table" style="width:100%; border-collapse:collapse; font-size:0.9rem;">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border); text-align:left; color:var(--text-secondary);">
+                  <th style="padding:0.75rem;">Paper / Category</th>
+                  <th style="padding:0.75rem;">Score</th>
+                  <th style="padding:0.75rem;">Percentage</th>
+                  <th style="padding:0.75rem;">Duration</th>
+                  <th style="padding:0.75rem;">Date & Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${history.map(h => `
+                  <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:0.75rem; font-weight:600;">${h.paperName}</td>
+                    <td style="padding:0.75rem;">${h.score} / ${h.total}</td>
+                    <td style="padding:0.75rem;">
+                      <span class="badge ${h.percentage >= 70 ? 'badge-success' : (h.percentage >= 40 ? 'badge-warning' : 'badge-danger')}">
+                        ${h.percentage}%
+                      </span>
+                    </td>
+                    <td style="padding:0.75rem; color:var(--text-secondary);">${h.timeTaken || '—'}</td>
+                    <td style="padding:0.75rem; color:var(--text-secondary); font-size:0.85rem;">${new Date(h.date).toLocaleString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      },
+
+      clearHistory() {
+        if (confirm('Clear all test history? (Saved mistakes and streaks will not be lost).')) {
+          Storage.set('testHistory', []);
+          this.renderStats();
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      StatsApp.init();
+    });
+  </script>
+</body>
+</html>

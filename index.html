@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TCS NQT Prep — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css?v=20261022">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-shell">
+      <div class="nav-brand">
+        <span class="brand-icon" aria-hidden="true">✦</span>
+        <span>TCS NQT Prep</span>
+      </div>
+      <div class="nav-links" id="main-nav">
+        <a href="index.html" class="active">Dashboard</a>
+        <a href="quiz.html">Practice Quiz</a>
+        <a href="test.html">Full Papers</a>
+        <a href="flashcards.html">Flashcards</a>
+        <a href="mistakes.html">Mistakes</a>
+        <a href="stats.html">Stats</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" onclick="toggleNavMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+  <nav class="mobile-dock" aria-label="Mobile navigation">
+    <a href="index.html" class="active"><span class="dock-icon">⌂</span>Home</a>
+    <a href="quiz.html"><span class="dock-icon">✓</span>Quiz</a>
+    <a href="test.html"><span class="dock-icon">▣</span>Mocks</a>
+    <a href="flashcards.html"><span class="dock-icon">◇</span>Cards</a>
+    <a href="mistakes.html"><span class="dock-icon">!</span>Mistakes</a>
+    <a href="stats.html"><span class="dock-icon">↗</span>Stats</a>
+  </nav>
+
+  <main class="container">
+    <!-- Hero / Welcome Section -->
+    <section class="hero-section" style="margin-bottom: 2rem;">
+      <div class="hero-copy">
+        <h1>TCS NQT Preparation Portal</h1>
+        <p id="today-date">Comprehensive PYQ bank, 3-hour timed mock exams, flashcard review, and mistake tracking.</p>
+      </div>
+      <div class="hero-actions">
+        <a href="quiz.html" class="btn btn-primary">Start practice</a>
+        <a href="test.html" class="btn btn-secondary">Mock test</a>
+      </div>
+    </section>
+
+    <!-- Guided weekly route -->
+    <section class="routebook-card" id="routebook" aria-labelledby="routebook-title">
+      <div class="routebook-heading">
+        <div>
+          <span class="eyebrow">TCS NQT PREP ROUTE</span>
+          <h2 id="routebook-title">Your weekly preparation route</h2>
+          <p id="routebook-subtitle">Set your pace once. TCS NQT Prep will keep the next action clear.</p>
+        </div>
+        <span class="badge badge-primary" id="routebook-phase">Baseline</span>
+      </div>
+      <div id="routebook-setup" class="routebook-setup">
+        <p>Tell us how you want to prepare and we’ll build your first week around the next Saturday mock.</p>
+        <div class="routebook-form">
+          <label>Daily study time
+            <select id="plan-daily-time"><option value="30">30 minutes</option><option value="60" selected>1 hour</option><option value="90">90 minutes</option><option value="120">2 hours</option></select>
+          </label>
+          <label>Target score
+            <select id="plan-target"><option value="60">60%+</option><option value="75" selected>75%+</option><option value="85">85%+</option></select>
+          </label>
+          <button class="btn btn-primary" id="create-plan-btn" type="button">Build my route</button>
+        </div>
+      </div>
+      <div id="routebook-content" class="hidden"></div>
+    </section>
+
+    <!-- Quick Stats Row -->
+    <div class="stats-grid" id="quick-stats">
+      <div class="card stat-card">
+        <div class="stat-value" id="stat-total-q">0</div>
+        <div class="stat-label">Total Questions</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="stat-attempted">0</div>
+        <div class="stat-label">Questions Attempted</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="stat-accuracy">0%</div>
+        <div class="stat-label">Overall Accuracy</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-value" id="stat-streak">0</div>
+        <div class="stat-label">Day Streak</div>
+      </div>
+    </div>
+
+    <!-- Main 4 Sections Grid -->
+    <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+      
+      <!-- Card 1: Practice Quiz -->
+      <div class="card module-card">
+        <div class="module-card-header">
+          <div>
+            <h2>Aptitude & CS Fundamentals</h2>
+            <p>300+ topic-wise MCQs across 31 core categories with instant answer checks.</p>
+          </div>
+          <span class="badge badge-primary" id="badge-cat-count">31 Topics</span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; max-height: 180px; overflow-y: auto; padding: 0.5rem 0;" id="popular-cats">
+          <!-- Dynamically filled -->
+        </div>
+        <div class="card-actions">
+          <a href="quiz.html" class="btn btn-primary btn-block">Open category practice →</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Full Length Timed Tests -->
+      <div class="card module-card">
+        <div class="module-card-header">
+          <div>
+            <h2>Full Length Mock Tests</h2>
+            <p>11 comprehensive papers with 3-hour strict countdown timers, question palette & scoring.</p>
+          </div>
+          <span class="badge badge-warning" id="badge-paper-count">11 Papers</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0.6rem; max-height: 180px; overflow-y: auto; padding-right: 0.3rem;" id="sample-papers">
+          <!-- Dynamically filled -->
+        </div>
+        <div class="card-actions">
+          <a href="test.html" class="btn btn-warning btn-block">Take 3-hour mock exam →</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Programming PYQs -->
+      <div class="card module-card">
+        <div class="module-card-header">
+          <div>
+            <h2>Programming PYQs & Patterns</h2>
+            <p>160+ coding problems categorized into Easy, Hard, and Verified previous year papers.</p>
+          </div>
+          <span class="badge badge-info">161 Codes</span>
+        </div>
+        <div class="grid grid-3" style="gap:0.75rem; margin-top:0.35rem;">
+          <a href="flashcards.html?type=programming_easy" class="card" style="background:var(--surface-alt); text-decoration:none; padding:0.8rem; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:1.2rem; font-weight:700; color:var(--accent);">50</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">DSA Easy</div>
+          </a>
+          <a href="flashcards.html?type=programming_hard" class="card" style="background:var(--surface-alt); text-decoration:none; padding:0.8rem; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:1.2rem; font-weight:700; color:var(--error);">30</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">DSA Hard</div>
+          </a>
+          <a href="flashcards.html?type=programming_verified" class="card" style="background:var(--surface-alt); text-decoration:none; padding:0.8rem; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:1.2rem; font-weight:700; color:var(--info);">81</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">Verified PYQs</div>
+          </a>
+        </div>
+        <div class="card-actions">
+          <a href="flashcards.html" class="btn btn-secondary btn-block">Review coding cards →</a>
+        </div>
+      </div>
+
+      <!-- Card 4: HR Questions & Mistake Notebook -->
+      <div class="card module-card">
+        <div class="module-card-header">
+          <div>
+            <h2>HR Interview & Mistakes Review</h2>
+            <p>Master 50 HR questions with model answers and review every test question you got wrong.</p>
+          </div>
+          <span class="badge badge-purple">Anki mode</span>
+        </div>
+        <div style="display:flex; gap:1rem; margin-top:0.25rem;">
+          <a href="flashcards.html?type=hr" class="card" style="flex:1; background:var(--surface-alt); text-decoration:none; padding:1rem; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:1.5rem; font-weight:700; color:var(--purple);">50</div>
+            <div style="font-size:0.85rem; color:var(--text-secondary);">HR flashcards</div>
+          </a>
+          <a href="mistakes.html" class="card" style="flex:1; background:var(--surface-alt); text-decoration:none; padding:1rem; text-align:center; border:1px solid var(--border);">
+            <div style="font-size:1.5rem; font-weight:700; color:var(--error);" id="mistakes-count-badge">0</div>
+            <div style="font-size:0.85rem; color:var(--text-secondary);">Saved mistakes</div>
+          </a>
+        </div>
+        <div class="card-actions">
+          <a href="mistakes.html" class="btn btn-danger btn-block">Practice saved mistakes →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Recent Activity Section -->
+    <section class="card" style="margin-bottom: 2.5rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; gap:1rem; flex-wrap:wrap;">
+        <h3 style="font-size:1.2rem;">Recent test activity</h3>
+        <a href="stats.html" style="color:var(--accent); font-size:0.9rem; text-decoration:none;">View full history →</a>
+      </div>
+      <div id="recent-tests-list">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>TCS NQT Preparation Web App • Questions sourced from <a href="https://github.com/Arjunpolen/TCS-NQT-PYQ-QUESTIONS" target="_blank">TCS-NQT-PYQ-QUESTIONS</a></p>
+  </footer>
+
+  <script src="js/qb01.js?v=20261022"></script>
+  <script src="js/qb02.js?v=20261022"></script>
+  <script src="js/qb03.js?v=20261022"></script>
+  <script src="js/qb04.js?v=20261022"></script>
+  <script src="js/qb05.js?v=20261022"></script>
+  <script src="js/qb06.js?v=20261022"></script>
+  <script src="js/qb07.js?v=20261022"></script>
+  <script src="js/qb08.js?v=20261022"></script>
+  <script src="js/qb09.js?v=20261022"></script>
+  <script src="js/qb10.js?v=20261022"></script>
+  <script src="js/qb11.js?v=20261022"></script>
+  <script src="js/qb12.js?v=20261022"></script>
+  <script src="js/qb13.js?v=20261022"></script>
+  <script src="js/qb14.js?v=20261022"></script>
+  <script src="js/qb15.js?v=20261022"></script>
+  <script src="js/qb16.js?v=20261022"></script>
+  <script src="question-bank.js?v=20261022"></script>
+  <script src="js/storage.js"></script>
+  <script>
+    function toggleNavMenu() {
+      const nav = document.getElementById('main-nav');
+      const toggle = document.querySelector('.nav-toggle');
+      if (!nav || !toggle) return;
+      nav.classList.toggle('open');
+      const isOpen = nav.classList.contains('open');
+      toggle.classList.toggle('active', isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+    }
+
+    function initDashboard() {
+      const streak = Storage.updateStreak();
+      const stats = Storage.getStats();
+
+      function localDate(date = new Date()) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      }
+
+      function getNextSaturday() {
+        const date = localDate();
+        const days = (6 - date.getDay() + 7) % 7;
+        date.setDate(date.getDate() + days);
+        return date;
+      }
+
+      function phaseFor(stats, history) {
+        if (!history.length && !stats.totalAttempted) return 'Baseline';
+        if (history.length >= 8) return 'Final readiness';
+        if (history.length >= 3) return 'Mock-test preparation';
+        if (stats.accuracy < 60) return 'Fundamentals';
+        return 'Strengthening';
+      }
+
+      function renderRoutebook() {
+        const setup = document.getElementById('routebook-setup');
+        const content = document.getElementById('routebook-content');
+        const plan = Storage.getPlan();
+        const history = Storage.getTestHistory();
+        const currentStats = Storage.getStats();
+        const nextSaturday = getNextSaturday();
+        const day = new Date().getDay();
+        const isSaturday = day === 6;
+        const completed = new Set(plan?.completedActivities || []);
+        const phase = phaseFor(currentStats, history);
+        const nextAction = isSaturday
+          ? { title: 'Take this week’s mock test', detail: 'Use Saturday to measure the work from this cycle.', href: 'test.html', id: 'mock-' + nextSaturday.toISOString().slice(0, 10), time: '3 hours' }
+          : currentStats.accuracy < 60
+            ? { title: 'Practice your weakest foundation topic', detail: 'Start with a focused category quiz and review every mistake.', href: 'quiz.html', id: 'foundations-' + nextSaturday.toISOString().slice(0, 10), time: `${plan?.dailyTime || 60} min` }
+            : Storage.getMistakes().length
+              ? { title: 'Recover your saved mistakes', detail: 'Turn recent wrong answers into points before Saturday.', href: 'mistakes.html', id: 'mistakes-' + nextSaturday.toISOString().slice(0, 10), time: `${plan?.dailyTime || 60} min` }
+              : { title: 'Review coding flashcards', detail: 'Strengthen recall with one focused coding deck.', href: 'flashcards.html?type=programming_verified', id: 'cards-' + nextSaturday.toISOString().slice(0, 10), time: `${plan?.dailyTime || 60} min` };
+
+        if (!plan) {
+          setup.classList.remove('hidden');
+          content.classList.add('hidden');
+          return;
+        }
+        setup.classList.add('hidden');
+        content.classList.remove('hidden');
+        document.getElementById('routebook-phase').textContent = phase;
+        const daysUntil = Math.max(0, Math.round((nextSaturday - localDate()) / 86400000));
+        const weekMockCount = history.filter(h => h.timeTaken && h.timeTaken !== 'Practice Quiz').length;
+        content.innerHTML = `
+          <div class="routebook-next">
+            <div><span class="eyebrow">NEXT BEST ACTION · ${nextAction.time}</span><h3>${nextAction.title}</h3><p>${nextAction.detail}</p></div>
+            <div class="routebook-actions"><a class="btn btn-primary" href="${nextAction.href}">${completed.has(nextAction.id) ? 'Open again' : 'Start now'} →</a><button class="btn btn-secondary btn-sm" type="button" id="complete-route-action">Mark complete</button></div>
+          </div>
+          <div class="routebook-week">
+            <div><strong>${isSaturday ? 'Mock day' : `${daysUntil} day${daysUntil === 1 ? '' : 's'} to Saturday`}</strong><span>Next mock: ${nextSaturday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span></div>
+            <div><strong>${weekMockCount} / 10</strong><span>Mock tests completed</span></div>
+            <div><strong>${plan.dailyTime} min</strong><span>Daily target · ${plan.target}% goal</span></div>
+          </div>
+          <div class="routebook-days" aria-label="Weekly preparation schedule">
+            ${['Sunday · Review', 'Mon–Thu · Build', 'Friday · Revise', 'Saturday · Mock'].map((label, index) => `<span class="${index === (day === 0 ? 0 : day === 6 ? 3 : day === 5 ? 2 : 1) ? 'active' : ''}">${label}</span>`).join('')}
+          </div>`;
+        document.getElementById('complete-route-action').onclick = () => { Storage.completeActivity(nextAction.id); renderRoutebook(); };
+      }
+
+      document.getElementById('create-plan-btn').addEventListener('click', () => {
+        Storage.savePlan({ dailyTime: Number(document.getElementById('plan-daily-time').value), target: Number(document.getElementById('plan-target').value), createdAt: new Date().toISOString(), completedActivities: [] });
+        renderRoutebook();
+      });
+
+      const d = new Date();
+      document.getElementById('today-date').textContent = `Today: ${d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' })}`;
+
+      let totalQ = 0;
+      if (typeof QUESTION_BANK !== 'undefined') {
+        if (QUESTION_BANK.categories) {
+          totalQ += QUESTION_BANK.categories.reduce((acc, c) => acc + (c.questions ? c.questions.length : 0), 0);
+        }
+        if (QUESTION_BANK.papers) {
+          QUESTION_BANK.papers.forEach(p => {
+            if (p.sections) {
+              p.sections.forEach(s => totalQ += (s.questions ? s.questions.length : 0));
+            }
+          });
+        }
+        if (QUESTION_BANK.flashcards) {
+          totalQ += (QUESTION_BANK.flashcards.hr?.length || 0);
+          totalQ += (QUESTION_BANK.flashcards.programming_easy?.length || 0);
+          totalQ += (QUESTION_BANK.flashcards.programming_hard?.length || 0);
+          totalQ += (QUESTION_BANK.flashcards.programming_verified?.length || 0);
+        }
+      }
+
+      document.getElementById('stat-total-q').textContent = totalQ;
+      document.getElementById('stat-attempted').textContent = stats.totalAttempted;
+      document.getElementById('stat-accuracy').textContent = stats.accuracy + '%';
+      document.getElementById('stat-streak').textContent = stats.streakDays;
+
+      const mistakes = Storage.getMistakes();
+      document.getElementById('mistakes-count-badge').textContent = mistakes.length;
+      renderRoutebook();
+
+      const catContainer = document.getElementById('popular-cats');
+      if (QUESTION_BANK.categories && catContainer) {
+        catContainer.innerHTML = QUESTION_BANK.categories.map(c => `
+          <a href="quiz.html?category=${c.id}" class="badge badge-outline" style="text-decoration:none; padding:0.4rem 0.6rem; font-size:0.8rem;">
+            ${c.name} (${c.questions?.length || 0})
+          </a>
+        `).join('');
+      }
+
+      const papersContainer = document.getElementById('sample-papers');
+      if (QUESTION_BANK.papers && papersContainer) {
+        const history = Storage.getTestHistory();
+        papersContainer.innerHTML = QUESTION_BANK.papers.slice(0, 4).map(p => {
+          let count = 0;
+          if (p.sections) p.sections.forEach(s => count += (s.questions ? s.questions.length : 0));
+          const past = history.find(h => h.paperId === p.id);
+          const badgeHtml = past ? `<span class="badge badge-success" style="font-size:0.75rem;">Best: ${past.percentage}%</span>` : '';
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--surface-alt); padding:0.6rem 0.8rem; border-radius:var(--radius-sm); border:1px solid var(--border); gap:0.5rem;">
+              <div>
+                <strong style="font-size:0.9rem; color:var(--text);">${p.name}</strong>
+                <span style="font-size:0.8rem; color:var(--text-secondary); margin-left:0.5rem;">${count} Qs</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end;">
+                ${badgeHtml}
+                <a href="test.html?paper=${p.id}" class="btn btn-secondary btn-sm">Start</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      const recentContainer = document.getElementById('recent-tests-list');
+      const testHistory = Storage.getTestHistory();
+      if (!testHistory || testHistory.length === 0) {
+        recentContainer.innerHTML = `<div style="text-align:center; padding:1.5rem; color:var(--text-secondary);">No tests taken yet. Choose a category or paper to start practicing!</div>`;
+      } else {
+        recentContainer.innerHTML = `
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Paper / Category</th>
+                <th>Score</th>
+                <th>Accuracy</th>
+                <th>Time</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${testHistory.slice(0, 5).map(t => `
+                <tr>
+                  <td>${t.paperName}</td>
+                  <td>${t.score} / ${t.total}</td>
+                  <td>
+                    <span class="badge ${t.percentage >= 70 ? 'badge-success' : (t.percentage >= 40 ? 'badge-warning' : 'badge-danger')}">
+                      ${t.percentage}%
+                    </span>
+                  </td>
+                  <td>${t.timeTaken || '—'}</td>
+                  <td>${new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof QUESTION_BANK !== 'undefined' && QUESTION_BANK) initDashboard();
+      else document.addEventListener('question-bank-ready', initDashboard, { once: true });
+    });
+  </script>
+</body>
+</html>

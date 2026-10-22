@@ -1,0 +1,6 @@
+.agents/
+.aws/
+.codex/
+.git-local/
+.DS_Store
+*.log
